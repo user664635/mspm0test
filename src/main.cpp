@@ -7,7 +7,9 @@ typedef uint32_t u32;
 #define GPIOACLR regmap(0x400a12a0)
 
 extern "C" void reset() {
-  GPIOASET = 0xffffffff;
+      PINCM14 = (1 << 7);
+
+    GPIOA_DOE31_0 |= (1 << 14);
   while (1) {
     GPIOA_D15_12 = 0x01010101;
   }
