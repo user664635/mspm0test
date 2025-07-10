@@ -1,5 +1,5 @@
 ARCH = -target armv6m-none-eabi -mthumb -mcpu=cortex-m0+
-CXX = clang
+CXX = clang++
 CXXFLAGS = $(ARCH) -O3 -Wall -std=c++2c -MMD -MP -Iinclude/ -ffreestanding 
 
 LD = clang -fuse-ld=lld

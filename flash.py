@@ -14,7 +14,7 @@ def rd():
 def ck(ack):
     if not ack: raise Exception("no ack")
     ack = ack[0]
-    if ack: raise Exception("ack:", ack)
+    if ack: raise Exception("ack:", hex(ack))
 def wc(data): ck(wr(data))
 def rw(data): wc(data); return rd()
 
