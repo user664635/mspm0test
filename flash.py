@@ -38,10 +38,16 @@ print(rw(b'\x21' + b'\xff' * 32).hex())
 print(rw(b'\x15').hex())
 with open("obj/main.bin", 'rb') as f:
     data = f.read()
+l = len(data)
+data += b'\xff' * (-l & 7)
 addr = b'\0' * 4
-data += b'\xff' * 1024
 wc(b'\x24' + addr + data)
-print(rw(b'\x26' + addr + len(data).to_bytes(4, 'little')).hex())
+
+l = len(data)
+data += b'\xff' * (1024 - l)
+veri = b'\x26' + addr + len(data).to_bytes(4, 'little')
 print(crc(data).hex())
+print(rw(veri).hex())
+print(rw(veri).hex())
 wc(b'\x40')
 
