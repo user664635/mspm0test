@@ -25,6 +25,8 @@ ser.baudrate = 2000000
 ser.timeout = 1
 
 id = rw(b'\x19')
+size = int.from_bytes(id[11:13], 'little') - 16
+print(hex(size))
 #print("Command Interpreter version:", id[2:0:-1].hex())
 #print("Build ID:", id[4:2:-1].hex())
 #print("Application version:", id[8:4:-1].hex())
@@ -39,13 +41,13 @@ print(rw(b'\x15').hex())
 with open("obj/main.bin", 'rb') as f:
     data = f.read()
 l = len(data)
-data += b'\xff' * (-l & 7)
-addr = b'\0' * 4
-wc(b'\x24' + addr + data)
-
-l = len(data)
+dl = -l & 7
+data += b'\xff' * dl
+l += dl
+for i in range(0,l,size):
+    wc(b'\x24' + i.to_bytes(4,'little') + data[i:i + size])
 data += b'\xff' * (1024 - l)
-veri = b'\x26' + addr + len(data).to_bytes(4, 'little')
+veri = b'\x26' + b'\0' * 4 + len(data).to_bytes(4, 'little')
 print(crc(data).hex())
 print(rw(veri).hex())
 print(rw(veri).hex())
