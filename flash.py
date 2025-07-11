@@ -1,7 +1,7 @@
-import serial
-import zlib
+import serial, zlib
 
 def crc(data): return (zlib.crc32(data)^0xffffffff).to_bytes(4, 'little')
+ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=.1)
 def wr(data):
     ser.write(b'\x80' + len(data).to_bytes(2, 'little') + data + crc(data))
     return ser.read(1) 
@@ -18,7 +18,6 @@ def ck(ack):
 def wc(data): ck(wr(data))
 def rw(data): wc(data); return rd()
 
-ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=.1)
 while not wr(b'\x12'): pass
 wc(b'\x52\x08')
 ser.baudrate = 2000000
