@@ -19,13 +19,14 @@ struct gpio {
 extern "C" void reset() {
 
   gpioa.rstctl = 0xb1000003;
+  gpioa.rstctl = 0xb1000003;
   gpioa.pwren = 0x26000001;
 
   for (u32 i = 251; i--; pincm[i] = 0x81)
     ;
 
-  GPIOA_DOE = 0xffffffff;
   GPIOA_OUT = 0xffffffff;
+  GPIOA_DOE = 0xffffffff;
   while (1) {
   }
 }
