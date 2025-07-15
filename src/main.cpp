@@ -2,31 +2,23 @@
 
 typedef uint32_t u32;
 typedef uint8_t u8;
-#define regmap(addr) (*(volatile u32 *)(addr))
 
-struct gpio {
-  u8 r0[0x800];
-  u32 pwren, rstctl;
-};
-#define gpioa (*(volatile gpio *)(0x400a0000))
-#define pincm ((volatile u32 *)(0x400a0000))
+#define regmap(addr) ((volatile u32 *)(addr))
+#define sfr(addr) (*(volatile u32 *)(addr))
 
-#define SYSCTL regmap(0x400af000)
-#define GPIOA_DOE regmap(0x400a12c0)
-#define GPIOA_OUT regmap(0x400a1280)
-#define GPIOA_TGL regmap(0x400a12b0)
+#define pincm regmap(0x40428000)
+#define gpioa_power regmap(0x400a0800)
+#define gpioa sfr(0x400a1280)
+#define gpioa_en sfr(0x400a12c0)
 
 extern "C" void reset() {
+  gpioa_power[1] = 0xb1000003;
+  gpioa_power[0] = 0x26000001;
+  pincm[36] = 0x81;
 
-  gpioa.rstctl = 0xb1000003;
-  gpioa.rstctl = 0xb1000003;
-  gpioa.pwren = 0x26000001;
+  gpioa_en = 0xffffffff;
+  gpioa = 0xffffffff;
 
-  for (u32 i = 251; i--; pincm[i] = 0x81)
-    ;
-
-  GPIOA_OUT = 0xffffffff;
-  GPIOA_DOE = 0xffffffff;
   while (1) {
   }
 }
