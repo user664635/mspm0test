@@ -19,7 +19,7 @@ void reset() {
   gpioa[16] = 0xffffffff;
   gpioa[0] = 0xffffffff;
 
-  syst[1] = 0xffffffff;
+  syst[1] = 16000000;
   syst[0] = 7;
 
   while (1) {
