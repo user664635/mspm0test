@@ -1,18 +1,17 @@
 ARCH = -target armv6m-none-eabi -mthumb -mcpu=cortex-m0+
-CXX = clang
-CXXFLAGS = $(ARCH) -O3 -Wall -std=c++2c -MMD -MP -Iinclude/ -ffreestanding 
-
-AS = clang
-ASFLAGS = $(ARCH) -O3 -Wall 
+CC = clang
+CXX = clang++
+FLAGS = $(ARCH) -O3 -Wall -MMD -MP -Iinc/ -ffreestanding 
+CFLAGS = $(FLAGS) -std=c2y
+CXXFLAGS = $(FLAGS) -std=c++2c
 
 LD = clang -fuse-ld=lld
 LDFLAGS = $(ARCH) -Tflash.ld -nostartfiles -nostdlib -static
 LDFLAGS += -Wl,-X,-s,-S,--as-needed,--gc-sections,--icf=all
 
-SRCS = $(wildcard src/*.cpp)
-SSRC = $(wildcard src/*.s)
-OBJS = $(SRCS:src/%.cpp=obj/%.o)
-SOBJ = $(SRCS:src/%.s=obj/%.o)
+SRCS = $(wildcard src/*)
+OBJS = $(addprefix obj/,$(notdir $(SRCS:.cpp=.o)))
+OBJS := $(OBJS:.c=.o)
 DEPS = $(OBJS:.o=.d)
 
 TARGET = obj/main
@@ -23,14 +22,14 @@ all: $(TARGET).bin
 $(TARGET).bin: $(TARGET).elf
 	llvm-objcopy -O binary $< $@
 
-$(TARGET).elf: $(OBJS) $(SOBJ)
+$(TARGET).elf: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
 obj/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-obj/%.o: src/%.s
-	$(AS) $(ASFLAGS) -c $< -o $@
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 -include $(DEPS)
 

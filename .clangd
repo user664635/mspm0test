@@ -1,2 +1,14 @@
 CompileFlags:
-  Add: [-std=c++2c, -Wall, -I../include/]
+  Add: [-Wall, -I../inc/]
+
+---
+If:
+  PathMatch: .*\.c
+CompileFlags:
+  Add: [-std=c2y]
+
+---
+If:
+  PathMatch: .*\.cpp
+CompileFlags:
+  Add: [-std=c++2c]
