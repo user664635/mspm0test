@@ -19,10 +19,14 @@ TARGET = obj/main
 all: $(TARGET).bin
 	sudo python flash.py
 
+build: $(TARGET).bin
+
+asm: $(OBJS:.o=.s)
+
 $(TARGET).bin: $(TARGET).elf
 	llvm-objcopy -O binary $< $@
 
-$(TARGET).elf: $(OBJS)
+$(TARGET).elf: $(OBJS) flash.ld
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
 obj/%.o: src/%.cpp
@@ -31,10 +35,16 @@ obj/%.o: src/%.cpp
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+obj/%.s: src/%.cpp
+	$(CXX) $(CXXFLAGS) -S $< -o $@
+
+obj/%.s: src/%.c
+	$(CC) $(CFLAGS) -S $< -o $@
+
 -include $(DEPS)
 
 clean:
 	rm -rf obj/*
 
-.PHONY: all clean
+.PHONY: all asm build clean
 

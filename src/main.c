@@ -12,6 +12,9 @@ typedef uint8_t u8;
 #define syst sfr(0xe000e010)
 
 void reset() {
+  extern u32 ldata[], sdata[], edata[];
+  for (u32 *l = ldata, *s = sdata, *e = edata; s < e; *s++ = *l++)
+    ;
   gpioa_power[1] = 0xb1000003;
   gpioa_power[0] = 0x26000001;
   pincm[36] = 0x81;
