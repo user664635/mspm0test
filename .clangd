@@ -1,5 +1,5 @@
 CompileFlags:
-  Add: [-Wall, -I../inc/]
+  Add: [-Wall, -Wextra, -I../inc/]
 
 ---
 If:

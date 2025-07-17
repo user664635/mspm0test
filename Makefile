@@ -1,13 +1,13 @@
-ARCH = -target armv6m-none-eabi -mthumb -mcpu=cortex-m0+
+ARCH = -target armv6m-none-eabi -mthumb -mcpu=cortex-m0+ -flto
 CC = clang
-CXX = clang++
-FLAGS = $(ARCH) -O3 -Wall -MMD -MP -Iinc/ -ffreestanding 
+CXX = clang
+FLAGS = $(ARCH) -O3 -Wall -MMD -MP -Iinc/ -ffreestanding -fno-exceptions -fno-unwind-tables
 CFLAGS = $(FLAGS) -std=c2y
 CXXFLAGS = $(FLAGS) -std=c++2c
 
 LD = clang -fuse-ld=lld
 LDFLAGS = $(ARCH) -Tflash.ld -nostartfiles -nostdlib -static
-LDFLAGS += -Wl,-X,-s,-S,--as-needed,--gc-sections,--icf=all
+LDFLAGS += -Wl,-X,-s,-S,--strip-all,--as-needed,--gc-sections,--icf=all,--lto-O3,--lto-whole-program-visibility,--exclude-libs=ALL
 
 SRCS = $(wildcard src/*)
 OBJS = $(addprefix obj/,$(notdir $(SRCS:.cpp=.o)))
