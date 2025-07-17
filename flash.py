@@ -17,38 +17,23 @@ def ck(ack):
     if ack: raise Exception("ack:", hex(ack))
 def wc(data): ck(wr(data))
 def rw(data): wc(data); return rd()
+def cm(ack, msg):
+    if ack != b'\x3b\0': raise Exception("ack:", ack.hex())
+    print(msg)
 
 while not wr(b'\x12'): pass
 wc(b'\x52\x08')
 ser.baudrate = 2000000
-ser.timeout = 1
 
 id = rw(b'\x19')
 size = int.from_bytes(id[11:13], 'little') - 16
-print(hex(size))
-#print("Command Interpreter version:", id[2:0:-1].hex())
-#print("Build ID:", id[4:2:-1].hex())
-#print("Application version:", id[8:4:-1].hex())
-#print("Active Plug-in interface version:", id[10:8:-1].hex())
-#print("BSL Max buffer size:", id[12:10:-1].hex())
-#print("BSL Buffer Start address:", id[16:12:-1].hex())
-#print("BCR Config ID:", id[20:16:-1].hex())
-#print("BSL Config ID:", id[24:20:-1].hex())
-
-print(rw(b'\x21' + b'\xff' * 32).hex())
-print(rw(b'\x15').hex())
-with open("obj/main.bin", 'rb') as f:
-    data = f.read()
-l = len(data)
-dl = -l & 7
-data += b'\xff' * dl
-l += dl
-for i in range(0,l,size):
-    wc(b'\x24' + i.to_bytes(4,'little') + data[i:i + size])
+cm(rw(b'\x21' + b'\xff' * 32), "unlock success")
+cm(rw(b'\x15'), "erase success")
+with open("obj/main.bin", 'rb') as f: data = f.read()
+l = len(data := data + b'\xff' * (-len(data) & 7))
+for i in range(0,l,size): wc(b'\x24' + i.to_bytes(4,'little') + data[i:i + size])
 data += b'\xff' * (1024 - l)
 veri = b'\x26' + b'\0' * 4 + len(data).to_bytes(4, 'little')
-print(crc(data).hex())
-print(rw(veri).hex())
-print(rw(veri).hex())
-wc(b'\x40')
+if crc(data) != (rw(veri), rw(veri))[1][1:]: raise Exception("verify faild")
+wc(b'\x40'); wr(b'\x40'); print("success")
 
