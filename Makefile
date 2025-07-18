@@ -1,7 +1,7 @@
 ARCH = -target armv6m-none-eabi -mthumb -mcpu=cortex-m0+ -flto
 CC = clang
 CXX = clang
-FLAGS = $(ARCH) -O3 -Wall -MMD -MP -Iinc/ -ffreestanding -fno-exceptions -fno-unwind-tables
+FLAGS = $(ARCH) -O3 -Wall -MMD -MP -Iinc/ -ffreestanding -fno-exceptions -fno-unwind-tables -ffixed-point
 CFLAGS = $(FLAGS) -std=c2y
 CXXFLAGS = $(FLAGS) -std=c++2c
 

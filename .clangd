@@ -1,5 +1,5 @@
 CompileFlags:
-  Add: [-Wall, -Wextra, -I../inc/]
+  Add: [-Wall, -Wextra, -ffixed-point, --target=armv6m-none-eabi, -I../inc/]
 
 ---
 If:

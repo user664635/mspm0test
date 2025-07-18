@@ -17,7 +17,12 @@ void reset() {
   extern u32 ldata[], sdata[], edata[];
   for (u32 *l = ldata, *s = sdata, *e = edata; s < e; *s++ = *l++)
     ;
-  sysctl[0x4c2] = 0;
+  sysctl[0x442] = -1;
+  sysctl[0x443] = 1;
+  sysctl[0x448] = 3;
+  sysctl[0x449] = 0x10;
+  sysctl[0x44d] = 0x10;
+
   gpioa_power[1] = 0xb1000003;
   gpioa_power[0] = 0x26000001;
   pincm[36] = 0x81;
